@@ -35,14 +35,14 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        Tagihan::create(
-            [
-                'uuid_warga' => '863c5e4d-d449-4455-a3b9-9293d55dc676',
-                'no_tagihan' => '202412',
-                'tanggal_tagihan' => '2024 12 1',
-                'status' => 'Belum Lunas',
-            ]
-        );
+        // Tagihan::create(
+        //     [
+        //         'uuid_warga' => '863c5e4d-d449-4455-a3b9-9293d55dc676',
+        //         'no_tagihan' => '202412',
+        //         'tanggal_tagihan' => '2024 12 1',
+        //         'status' => 'Belum Lunas',
+        //     ]
+        // );
 
         // Tagihan::where('uuid', '1f0f63cc-c075-483f-b752-972fba737a34')->delete();
 
