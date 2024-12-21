@@ -27,6 +27,12 @@ class Auth extends BaseController
         return view('kolektor.login.index', compact('module'));
     }
 
+    public function login_monitoring()
+    {
+        $module = 'Login Monitoring';
+        return view('monitoring.login.index', compact('module'));
+    }
+
     public function login_proses_admin(RequestAuth $requestAuth)
     {
         $credential = $requestAuth->getCredentials();
@@ -55,12 +61,28 @@ class Auth extends BaseController
         return $this->authenticated();
     }
 
+    public function login_proses_monitoring(RequestAuth $requestAuth)
+    {
+        $credential = $requestAuth->getCredentials();
+        $user = User::where('username', $requestAuth->username)->first();
+
+        if (!$user || !FacadesAuth::guard('user')->attempt($credential)) {
+            return redirect()->route('login.login-monitoring')
+                ->with('failed', 'Username atau Password salah')
+                ->withInput($requestAuth->only('username'));
+        }
+
+        return $this->authenticated();
+    }
+
     public function authenticated()
     {
         if (auth()->guard('user')->user()->role === 'admin') {
             return redirect()->route('admin.dashboard-admin');
         } elseif (auth()->guard('user')->user()->role === 'kolektor') {
             return redirect()->route('kolektor.dashboard-kolektor');
+        } elseif (auth()->guard('user')->user()->role === 'monitoring') {
+            return redirect()->route('monitoring.dashboard-monitoring');
         }
     }
 
@@ -111,5 +133,11 @@ class Auth extends BaseController
     {
         auth()->guard('user')->logout();
         return redirect()->route('login.login-kolektor')->with('success', 'Berhasil Logout');
+    }
+
+    public function logout_monitoring()
+    {
+        auth()->guard('user')->logout();
+        return redirect()->route('login.login-monitoring')->with('success', 'Berhasil Logout');
     }
 }

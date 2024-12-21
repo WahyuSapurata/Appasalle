@@ -57,6 +57,7 @@ class Kernel extends HttpKernel
         'auth.admin' => \App\Http\Middleware\AdminAuth::class,
         'auth.user' => \App\Http\Middleware\WargaAuth::class,
         'auth.kolektor' => \App\Http\Middleware\KolektorAuth::class,
+        'auth.monitoring' => \App\Http\Middleware\MonitoringAuth::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,

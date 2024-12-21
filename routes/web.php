@@ -27,6 +27,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
         Route::get('/login-kolektor', 'Auth@login_kolektor')->name('login-kolektor');
         Route::post('/login-proses-kolektor', 'Auth@login_proses_kolektor')->name('login-proses-kolektor');
+
+        Route::get('/login-monitoring', 'Auth@login_monitoring')->name('login-monitoring');
+        Route::post('/login-proses-monitoring', 'Auth@login_proses_monitoring')->name('login-proses-monitoring');
     });
 
     Route::group(['prefix' => 'admin', 'middleware' => ['auth.admin'], 'as' => 'admin.'], function () {
@@ -84,6 +87,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/proses-transaksi/{uuid}', 'TransaksiController@proses_kolektor')->name('proses-transaksi');
     });
 
+    Route::group(['prefix' => 'monitoring', 'middleware' => ['auth.monitoring'], 'as' => 'monitoring.'], function () {
+        Route::get('/dashboard-monitoring', 'Dashboard@dashboard_monitoring')->name('dashboard-monitoring');
+
+        Route::get('/chart', 'Dashboard@chart')->name('chart');
+
+        // Route::get('/profil', 'ProfilUser@ptofil_kolektor')->name('profil');
+    });
+
     Route::group(['prefix' => 'user', 'middleware' => ['auth.user'], 'as' => 'user.'], function () {
         Route::get('/dashboard-user', 'Dashboard@dashboard_user')->name('dashboard-user');
 
@@ -107,4 +118,5 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/logout', 'Auth@logout')->name('logout');
     Route::get('/logout-user', 'Auth@logout_user')->name('logout-user');
     Route::get('/logout-kolektor', 'Auth@logout_kolektor')->name('logout-kolektor');
+    Route::get('/logout-monitoring', 'Auth@logout_monitoring')->name('logout-monitoring');
 });

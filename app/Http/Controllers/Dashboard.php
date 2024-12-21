@@ -262,6 +262,127 @@ class Dashboard extends BaseController
         return view('kolektor.dashboard.index', compact('module', 'totalWarga', 'totalWargaLunas', 'totalWargaMenunggak', 'totalTarif', 'totalTarifLunas', 'transaksiLunas', 'warga'));
     }
 
+    public function dashboard_monitoring()
+    {
+        $module = 'Dashboard Monitoring';
+
+        // Ambil semua transaksi
+        $transaksi = Transaksi::all()->filter(function ($item) {
+            // Ambil data tagihan berdasarkan UUID tagihan
+            $uuidTagihan = is_array($item->uuid_tagihan) ? $item->uuid_tagihan : [$item->uuid_tagihan];
+            $tagihan = Tagihan::whereIn('uuid', $uuidTagihan)->get();
+
+            // Cek apakah ada tagihan yang berstatus 'Proses'
+            return $tagihan->contains('status', 'Proses');
+        });
+
+        // Map setiap transaksi yang telah difilter
+        $transaksi->map(function ($item) {
+            // Ambil data warga berdasarkan UUID
+            $warga = Warga::where('uuid', $item->uuid_warga)->first();
+
+            // Ambil data tagihan berdasarkan UUID tagihan
+            $uuidTagihan = is_array($item->uuid_tagihan) ? $item->uuid_tagihan : [$item->uuid_tagihan];
+            $tagihan = Tagihan::whereIn('uuid', $uuidTagihan)->get();
+
+            // Ambil bulan tagihan dari data tagihan
+            $bulan_tagihan = $tagihan->pluck('tanggal_tagihan')->toArray();
+
+            // Ambil status dari tagihan pertama
+            $status = $tagihan->first()?->status;
+
+            // Tambahkan properti dari warga dan tagihan ke item transaksi
+            $item->nama = $warga->nama ?? null;
+            $item->nprw = $warga->nprw ?? null;
+            $item->jenis_sampah = $warga->jenis_sampah ?? null;
+            $item->alamat = $warga->alamat ?? null;
+            $item->rt = $warga->rt ?? null;
+            $item->rw = $warga->rw ?? null;
+            $item->tarif = $warga->tarif ?? null;
+            $item->kelurahan = $warga->kelurahan ?? null;
+            $item->foto_warga = $warga->foto ?? null;
+            $item->bulan_tagihan = $bulan_tagihan;
+            $item->status = $status;
+
+            return $item;
+        });
+
+        $tagihan = Tagihan::where('status', 'Lunas')->get();
+
+        $totalTarifTahunIni = 0;
+        $totalTarifBulanIni = 0;
+        $totalTarifHariIni = 0;
+        $totalTarifKeseluruhan = 0;
+
+        $tagihan->map(function ($item) use (&$totalTarifTahunIni, &$totalTarifBulanIni, &$totalTarifHariIni, &$totalTarifKeseluruhan) {
+            // Ambil data warga terkait
+            $warga = Warga::where('uuid', $item->uuid_warga)->first();
+
+            // Ambil transaksi yang memiliki uuid_tagihan yang cocok dengan uuid di tagihan
+            $transaksi = Transaksi::all()->first(function ($trx) use ($item) {
+                // Decode uuid_tagihan jika dalam format JSON
+                $uuidTagihanTransaksi = is_array($trx->uuid_tagihan)
+                    ? $trx->uuid_tagihan
+                    : json_decode($trx->uuid_tagihan, true);
+
+                // Pastikan ini adalah array dan cocokkan UUID
+                return is_array($uuidTagihanTransaksi) && in_array($item->uuid, $uuidTagihanTransaksi);
+            });
+
+            if ($warga) {
+                $tanggalTagihan = Carbon::createFromFormat('Y m d', $item->tanggal_tagihan); // Pastikan 'tanggal_tagihan' adalah format tanggal yang valid
+                $tanggalTransaksi = Carbon::parse($transaksi->created_at); // Otomatis parsing timestamp
+
+                $totalTarifKeseluruhan += $warga->tarif;
+
+                // Hitung total berdasarkan tahun ini
+                if ($tanggalTagihan->isCurrentYear()) {
+                    $totalTarifTahunIni += $warga->tarif;
+                }
+
+                // Hitung total berdasarkan bulan ini
+                if ($tanggalTagihan->isCurrentMonth()) {
+                    $totalTarifBulanIni += $warga->tarif;
+                }
+
+                // Hitung total berdasarkan hari ini
+                if ($tanggalTransaksi->isToday()) {
+                    $totalTarifHariIni = $transaksi->terbayarkan;
+                }
+            }
+        });
+
+        $persentaseTahunan = 0;
+        if ($totalTarifKeseluruhan > 0) {
+            $persentaseTahunan = ($totalTarifTahunIni / $totalTarifKeseluruhan) * 100;
+        }
+
+        // Ambil total tarif per kelurahan berdasarkan UUID warga
+        $kelurahanStats = Warga::join('tagihans', 'wargas.uuid', '=', 'tagihans.uuid_warga')
+            ->select(
+                'wargas.kelurahan',
+                DB::raw('SUM(wargas.tarif) as total_tarif')
+            )
+            ->where('tagihans.status', 'Lunas')
+            ->groupBy('wargas.kelurahan')
+            ->orderBy('total_tarif', 'desc')
+            ->get();
+
+        // Hitung total keseluruhan tarif untuk progress bar
+        $totalKeseluruhan = $kelurahanStats->sum('total_tarif');
+
+        // Tambahkan persentase untuk setiap kelurahan
+        $kelurahanStats = $kelurahanStats->map(function ($item) use ($totalKeseluruhan) {
+            $item->persentase = $totalKeseluruhan > 0
+                ? ($item->total_tarif / $totalKeseluruhan) * 100
+                : 0;
+
+            return $item;
+        });
+
+        return view('monitoring.dashboard.index', compact('module', 'transaksi', 'totalTarifTahunIni', 'totalTarifBulanIni', 'totalTarifHariIni', 'persentaseTahunan', 'kelurahanStats'));
+    }
+
     public function chart(Request $request)
     {
         // Validasi input tahun dari request

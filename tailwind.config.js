@@ -17,6 +17,9 @@ module.exports = {
         "./resources/views/admin/profiladmin/index.blade.php",
         "./resources/views/admin/user/index.blade.php",
 
+        "./resources/views/monitoring/login/index.blade.php",
+        "./resources/views/monitoring/dashboard/index.blade.php",
+
         "./resources/views/user/partial-html/_template-top.blade.php",
         "./resources/views/user/partial-html/_template-bottom.blade.php",
         "./resources/views/user/layouts/_breadcrumb.blade.php",
