@@ -421,6 +421,8 @@ class Dashboard extends BaseController
             ->orderBy(DB::raw('MONTH(STR_TO_DATE(tagihans.tanggal_tagihan, "%Y %m %d"))')) // Urut berdasarkan bulan
             ->get();
 
+        dd($summary);
+
 
         // Format data untuk chart
         $labels = $summary->pluck('bulan_num')->map(function ($bulan_num) use ($bulanIndonesia) {
