@@ -36,8 +36,6 @@ class TagihanController extends BaseController
             return $item;
         });
 
-        dd($tagihan);
-
         return view('admin.tunggakan.index', compact('module', 'tagihan'));
     }
 
