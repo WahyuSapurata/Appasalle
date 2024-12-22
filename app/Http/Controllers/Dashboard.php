@@ -436,7 +436,7 @@ class Dashboard extends BaseController
             'datasets' => [
                 [
                     'label' => 'Total Target',
-                    'data' => [$totalTarif],
+                    'data' => [floatval($totalTarif ?? 0)],
                     'backgroundColor' => 'rgb(0, 123, 200)',
                 ],
                 [
@@ -462,13 +462,13 @@ class Dashboard extends BaseController
             foreach ($summary as $item) {
                 if ($bulan == $bulanIndonesia[$item->bulan_num]) {
                     if ($item->status == 'Lunas') {
-                        $data['datasets'][1]['data'][] = $item->total_tarif ?? 0;
+                        $data['datasets'][1]['data'][] = floatval($item->total_tarif ?? 0);
                     }
                     if ($item->status == 'Belum Lunas') {
-                        $data['datasets'][2]['data'][] = $item->total_tarif ?? 0;
+                        $data['datasets'][2]['data'][] = floatval($item->total_tarif ?? 0);
                     }
                     if ($item->status == 'Proses') {
-                        $data['datasets'][3]['data'][] = $item->total_tarif ?? 0;
+                        $data['datasets'][3]['data'][] = floatval($item->total_tarif ?? 0);
                     }
                 }
             }
