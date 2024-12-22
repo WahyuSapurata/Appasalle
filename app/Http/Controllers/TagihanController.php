@@ -19,21 +19,24 @@ class TagihanController extends BaseController
         $tagihan = Tagihan::all();
 
         $tagihan->map(function ($item) {
+            // Ambil data warga berdasarkan UUID
             $warga = Warga::where('uuid', $item->uuid_warga)->first();
 
+            // Tambahkan atribut warga ke item tagihan
             $item->nama = $warga->nama;
             $item->nprw = $warga->nprw;
             $item->foto = $warga->foto;
             $item->kelurahan = $warga->kelurahan;
             $item->jenis_sampah = $warga->jenis_sampah;
-            $item->tagihan_bulan = $item->whereIn('status', ['Belum Lunas', 'Proses'])->count();
-            $item->total_belum_lunas = $item->whereIn('status', ['Belum Lunas', 'Proses'])->count() * $warga->tarif;
-            $item->total_lunas = $item->whereIn('status', ['Lunas'])->count() * $warga->tarif;
+
+            // Hitung total tagihan berdasarkan status
+            $tagihanWarga = $item->where('uuid_warga', $item->uuid_warga); // Koleksi tagihan untuk warga tersebut
+            $item->tagihan_bulan = $tagihanWarga->whereIn('status', ['Belum Lunas', 'Proses'])->count();
+            $item->total_belum_lunas = $tagihanWarga->whereIn('status', ['Belum Lunas', 'Proses'])->sum('jumlah'); // Gunakan sum pada field jumlah
+            $item->total_lunas = $tagihanWarga->where('status', 'Lunas')->sum('jumlah'); // Gunakan sum pada field jumlah
 
             return $item;
         });
-
-        dd($tagihan);
 
         return view('admin.tunggakan.index', compact('module', 'tagihan'));
     }
