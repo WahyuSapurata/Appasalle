@@ -492,7 +492,7 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString();
+                                    return 'Rp ' + value.toLocaleString('id-ID');
                                 },
                             },
                         },
@@ -504,7 +504,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.dataset.label}: Rp ${context.raw.toLocaleString()}`;
+                                    return `${context.dataset.label}: Rp ${context.raw.toLocaleString('id-ID')}`;
                                 },
                             },
                         },
