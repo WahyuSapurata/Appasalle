@@ -26,6 +26,7 @@ class TagihanController extends BaseController
             $item->foto = $warga->foto;
             $item->kelurahan = $warga->kelurahan;
             $item->jenis_sampah = $warga->jenis_sampah;
+            $item->tagihan_bulan = $item->whereIn('status', ['Belum Lunas', 'Proses'])->count();
             $item->total_belum_lunas = $item->whereIn('status', ['Belum Lunas', 'Proses'])->count() * $warga->tarif;
             $item->total_lunas = $item->whereIn('status', ['Lunas'])->count() * $warga->tarif;
 
