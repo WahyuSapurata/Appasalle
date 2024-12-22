@@ -413,7 +413,7 @@ class Dashboard extends BaseController
             ->select(
                 'tagihans.status',
                 DB::raw('COUNT(tagihans.uuid) as total_tagihan'),
-                DB::raw('SUM(CAST(wargas.tarif AS DECIMAL(10,2))) as total_tarif'), // Mengonversi tarif ke DECIMAL
+                DB::raw('SUM(CAST(CAST(wargas.tarif AS DECIMAL(10, 2)) AS UNSIGNED)) AS total_tarif'), // Mengonversi tarif ke DECIMAL
                 DB::raw('MONTH(STR_TO_DATE(tagihans.tanggal_tagihan, "%Y %m %d")) as bulan_num') // Ambil bulan numerik
             )
             ->whereYear(DB::raw('STR_TO_DATE(tagihans.tanggal_tagihan, "%Y %m %d")'), '=', $selectedYear) // Filter tahun
@@ -421,16 +421,13 @@ class Dashboard extends BaseController
             ->orderBy(DB::raw('MONTH(STR_TO_DATE(tagihans.tanggal_tagihan, "%Y %m %d"))')) // Urut berdasarkan bulan
             ->get();
 
-        dd($summary);
-
-
         // Format data untuk chart
         $labels = $summary->pluck('bulan_num')->map(function ($bulan_num) use ($bulanIndonesia) {
             return $bulanIndonesia[$bulan_num] ?? 'Tidak diketahui';
         })->unique()->values()->toArray();
 
         $totalTarif = DB::table('wargas')
-            ->selectRaw('SUM(CAST(tarif AS DECIMAL(10,2))) as total_tarif')
+            ->selectRaw('SUM(CAST(CAST(tarif AS DECIMAL(10, 2)) AS UNSIGNED)) AS total_tarif')
             ->first()
             ->total_tarif;
 
@@ -465,13 +462,13 @@ class Dashboard extends BaseController
             foreach ($summary as $item) {
                 if ($bulan == $bulanIndonesia[$item->bulan_num]) {
                     if ($item->status == 'Lunas') {
-                        $data['datasets'][1]['data'][] = $item->total_tagihan * $item->total_tarif;
+                        $data['datasets'][1]['data'][] = $item->total_tarif ?? 0;
                     }
                     if ($item->status == 'Belum Lunas') {
-                        $data['datasets'][2]['data'][] = $item->total_tagihan * $item->total_tarif;
+                        $data['datasets'][2]['data'][] = $item->total_tarif ?? 0;
                     }
                     if ($item->status == 'Proses') {
-                        $data['datasets'][3]['data'][] = $item->total_tagihan * $item->total_tarif;
+                        $data['datasets'][3]['data'][] = $item->total_tarif ?? 0;
                     }
                 }
             }
