@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUmkmRequest;
 use App\Http\Requests\UpdateUmkmRequest;
+use App\Imports\UmkmImport;
 use App\Models\MenuUmkm;
 use App\Models\Umkm;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UmkmController extends BaseController
 {
@@ -45,6 +48,17 @@ class UmkmController extends BaseController
             return $this->sendError($e->getMessage(), $e->getMessage(), 400);
         }
         return $this->sendResponse($data, 'Added data success');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        Excel::import(new UmkmImport, $request->file('file'));
+
+        return redirect()->back()->with('success', 'Data berhasil diimpor!');
     }
 
     public function detail($params)

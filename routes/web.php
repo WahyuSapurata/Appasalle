@@ -54,6 +54,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update-umkm/{uuid}', 'UmkmController@edit')->name('update-umkm');
         Route::delete('/delete-umkm/{uuid}', 'UmkmController@delete')->name('delete-umkm');
 
+        Route::post('/import-umkm', 'UmkmController@import')->name('import-umkm');
+
         Route::post('/add-menu', 'MenuUmkmController@add')->name('add-menu');
         Route::get('/get-menu/{uuid_umkm}', 'MenuUmkmController@get')->name('get-menu');
         Route::delete('/delete-menu/{uuid}', 'MenuUmkmController@delete')->name('delete-menu');

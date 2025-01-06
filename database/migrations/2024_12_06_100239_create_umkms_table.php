@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('nama_umkm');
-            $table->string('alamat');
-            $table->string('rt');
-            $table->string('rw');
+            $table->string('alamat')->nullable();
+            $table->string('rt')->nullable();
+            $table->string('rw')->nullable();
             $table->string('kelurahan');
             $table->string('jenis_umkm');
-            $table->string('telepon');
-            $table->string('sosial_media');
-            $table->string('foto');
+            $table->string('telepon')->nullable();
+            $table->string('sosial_media')->nullable();
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

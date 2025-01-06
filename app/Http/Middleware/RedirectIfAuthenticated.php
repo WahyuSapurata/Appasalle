@@ -21,6 +21,8 @@ class RedirectIfAuthenticated
                         return redirect()->route('admin.dashboard-admin');
                     } elseif (Auth::guard('user')->user()->role == 'kolektor') {
                         return redirect()->route('kolektor.dashboard-kolektor');
+                    } elseif (Auth::guard('user')->user()->role == 'monitoring') {
+                        return redirect()->route('monitoring.dashboard-monitoring');
                     }
                 } elseif ($guard === 'warga') {
                     return redirect()->route('user.dashboard-user');

@@ -11,12 +11,21 @@
             <div class="col-span-2">
                 <div class="card bg-transparent border-0 mb-2">
                     <div class="flex gap-2 justify-between">
-                        <button id="btn-tambah" type="button" data-modal-target="authentication-modal"
-                            data-modal-toggle="authentication-modal"
-                            class="flex items-center gap-2 px-5 py-0 btn text-white bg-[#096B5A]">
-                            <iconify-icon icon="pepicons-pop:plus" class="menu-icon"></iconify-icon>
-                            <span class="text-[10px] font-semibold">TAMBAH UMKM</span>
-                        </button>
+                        <div class="flex gap-2">
+                            <button id="btn-tambah" type="button" data-modal-target="authentication-modal"
+                                data-modal-toggle="authentication-modal"
+                                class="flex items-center gap-2 px-5 py-0 btn text-white bg-[#096B5A]">
+                                <iconify-icon icon="pepicons-pop:plus" class="menu-icon"></iconify-icon>
+                                <span class="text-[10px] font-semibold">TAMBAH UMKM</span>
+                            </button>
+
+                            <button data-modal-target="authentication-modal-upload"
+                                data-modal-toggle="authentication-modal-upload" type="button"
+                                class="flex items-center gap-2 px-5 py-0 btn text-white bg-[#096B5A]">
+                                <iconify-icon icon="line-md:upload-loop" class="menu-icon"></iconify-icon>
+                                <span class="text-[10px] font-semibold">IMPORT DATA UMKM</span>
+                            </button>
+                        </div>
                         <!-- Main modal -->
                         <div id="authentication-modal" tabindex="-1" aria-hidden="true"
                             class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -113,13 +122,9 @@
                                                 <label for="jenis_umkm-modal"
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white uppercase">jenis
                                                     umkm</label>
-                                                <select id="jenis_umkm-modal" name="jenis_umkm"
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                                    <option value="">Pilih Jenis UMKM
-                                                    </option>
-                                                    <option value="Makanan & Minuman">Makanan &
-                                                        Minuman</option>
-                                                </select>
+                                                <input type="text" name="jenis_umkm" id="jenis_umkm"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                                    placeholder="Makanan, Jasa, dll">
                                                 <div class="text-danger-600 text-sm jenis_umkm_error"></div>
                                             </div>
                                             <div class="col-span-2">
@@ -151,6 +156,64 @@
                                                         style="font-size: 20px;"></iconify-icon>
                                                     <span>simpan</span>
                                                 </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="authentication-modal-upload" tabindex="-1" aria-hidden="true"
+                            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                            <div class="relative p-4 w-full max-w-md max-h-full">
+                                <!-- Modal content -->
+                                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <!-- Modal body -->
+                                    <div class="p-4 md:p-5">
+                                        <form class="space-y-4 grid grid-cols-2 gap-1"
+                                            action="{{ route('admin.import-umkm') }}" method="POST"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="col-span-2">
+                                                <div
+                                                    class="border-2 border-dashed border-[#096B5A] rounded-lg p-6 text-center">
+                                                    <iconify-icon icon="line-md:cloud-alt-upload-twotone-loop"
+                                                        class="menu-icon text-5xl text-[#096B5A] mx-auto"></iconify-icon>
+                                                    <p class="text-[10px] text-[#096B5A] mt-4 mb-0">Berkas <span
+                                                            class="font-medium">.csv</span>, <span
+                                                            class="font-medium">.xls</span>, <span
+                                                            class="font-medium">.xlsx</span></p>
+                                                    <p class="text-[#096B5A] text-xs mb-0">Seret dan lepas berkas
+                                                        kesini
+                                                        untuk
+                                                        mengunggah <br> atau</p>
+                                                    <div class="flex justify-center">
+                                                        <label
+                                                            class="flex items-center w-max mt-4 px-4 py-2 bg-teal-100 text-teal-700 border rounded-md cursor-pointer hover:bg-teal-200">
+                                                            <input type="file" name="file" class="hidden"
+                                                                accept=".csv, .xls, .xlsx">
+                                                            <iconify-icon icon="line-md:upload-loop"
+                                                                class="mr-2"></iconify-icon>
+                                                            <span>BROWSE FILE</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-span-2 flex justify-end">
+                                                <div class="flex gap-2">
+                                                    <button data-modal-hide="authentication-modal-upload"
+                                                        type="reset"
+                                                        class="text-[#096B5A] bg-transparent font-medium text-sm px-3 py-2.5 text-center uppercase">
+                                                        batalkan
+                                                    </button>
+                                                    <button type="submit"
+                                                        class="flex items-center gap-2 text-white bg-[#096B5A] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center uppercase">
+                                                        <iconify-icon icon="material-symbols:save" class="menu-icon"
+                                                            style="font-size: 20px;"></iconify-icon>
+                                                        <span>simpan</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -247,36 +310,6 @@
                                 </div>
                             </div>
                             <!-- Dropdown End -->
-
-                            <!-- Dropdown Start -->
-                            <div class="">
-                                <button data-dropdown-toggle="bidang-usaha" data-dropdown-placement="bottom"
-                                    class="text-[#4B635C] dark:text-white border text-[10px] font-semibold border-[#4B635C] bg-transparent hover:bg-primary-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-primary-300 rounded-lg px-2 py-2 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 gap-5"
-                                    type="button">Bidang Usaha
-                                    <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
-                                <!-- Dropdown menu -->
-                                <div id="bidang-usaha"
-                                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-2xl w-44 dark:bg-gray-700">
-                                    <ul class="py-2 text-base text-[#4B635C] dark:text-gray-200">
-                                        <li>
-                                            <a href="javascript:void(0)"
-                                                class="active block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Semua</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)"
-                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Makanan
-                                                & Minuman</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- Dropdown End -->
-
                             <button
                                 class="bg-[#FFDAD6] px-3 py-2 text-[#BA1A1A] text-[10px] font-semibold reset rounded-lg">RESET</button>
                         </div>
